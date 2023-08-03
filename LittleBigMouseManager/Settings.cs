@@ -15,24 +15,16 @@ namespace LittleBigMouseManager
         public const string fileName = "Manager_Settings.json";
         public class Properties
         {
-            public string ProcessName { get; set; }
-            public string ProcessPath { get; set; }
-            public bool AutoRestart { get; set; }
-            public bool RestartOnClose { get; set; }
-            public bool RestartOnUnwantedClose { get; set; }
-            public bool KillLBM { get; set; }
-            public uint SafetyTime { get; set; }
+            public string ProcessName { get; set; } = "LittleBigMouse_Daemon";
+            public string ProcessPath { get; set; } = "C:\\Program Files\\LittleBigMouse\\LittleBigMouse_Daemon.exe";
+            public bool AutoRestart { get; set; } = true;
+            public bool RestartOnClose { get; set; } = false;
+            public bool RestartOnUnwantedClose { get; set; } = true;
+            public bool KillLBM { get; set; } = true;
+            public int SafetyTime { get; set; } = 500;
+            public int DisplayChangeTime { get; set; } = 3000;
         }
-        public readonly static Properties defaultProperties = new Properties
-        {
-            ProcessName = "LittleBigMouse_Daemon",
-            ProcessPath = "C:\\Program Files\\LittleBigMouse\\LittleBigMouse_Daemon.exe",
-            AutoRestart = true,
-            RestartOnClose = false,
-            RestartOnUnwantedClose = true,
-            KillLBM = true,
-            SafetyTime = 1000,
-        };
+        public readonly static Properties defaultProperties = new Properties();
         public static Properties loadedProperties = null;
 
         public static void Read()

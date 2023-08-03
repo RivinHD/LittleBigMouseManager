@@ -1,0 +1,15 @@
+<Configuration>
+  <VGpu>Disable</VGpu>
+  <Networking>Disable</Networking>
+  <AudioInput>Disable</AudioInput>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>S:\VS-Projects\LittleBigMouseManager\Setup\Release</HostFolder>
+      <SandboxFolder>C:\Users\WDAGUtilityAccount\Release</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>C:\Users\WDAGUtilityAccount\Release\Setup.exe</Command>
+  </LogonCommand>
+</Configuration>

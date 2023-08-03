@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
@@ -40,7 +41,6 @@ namespace LittleBigMouseManager
             process.StartInfo.Arguments = "--start";
         }
 
-
         private Process GetProcess()
         {
             Process[] processlist = Process.GetProcessesByName(processName);
@@ -53,6 +53,10 @@ namespace LittleBigMouseManager
                 }
             }
             return null;
+        }
+        public bool ProcessExists()
+        {
+            return File.Exists(processPath);
         }
 
         public bool IsRunning()
@@ -81,6 +85,10 @@ namespace LittleBigMouseManager
             }
 
             process = Process.Start(processPath, arguments);
+            if (process == null)
+            {
+                return false;
+            }
             SetProcessSettings(process);
             if (process.HasExited)
             {
@@ -94,6 +102,10 @@ namespace LittleBigMouseManager
         public bool RawStart(string arguments)
         {
             Process argumentProcess = Process.Start(processPath, arguments);
+            if (argumentProcess == null)
+            {
+                return false;
+            }
             return argumentProcess.HasExited;
         }
 

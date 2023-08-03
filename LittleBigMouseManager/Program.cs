@@ -11,6 +11,7 @@ using LittleBigMouseManager.Properties;
 using System.Threading;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Management.Instrumentation;
 
 namespace LittleBigMouseManager
 {
@@ -60,6 +61,7 @@ namespace LittleBigMouseManager
             {
                 Icon = Resources.AppIcon,
                 ContextMenu = new ContextMenu(new MenuItem[] {
+                    new MenuItem("Open Settings", OpenSettings),
                     new MenuItem("Reload Settings", ReloadSettings),
                     new MenuItem("Exit", Exit)
                 }),
@@ -72,6 +74,15 @@ namespace LittleBigMouseManager
             Settings.Read();
             properties = Settings.loadedProperties;
             manager = new ProcessManager(properties.ProcessName, properties.ProcessPath);
+            if (!manager.ProcessExists())
+            {
+                Application.Exit(); 
+                CustomMessageBox.Show(
+                    $"Could not find {properties.ProcessName}",
+                    Assembly.GetEntryAssembly().GetName().Name,
+                    CustomMessageBox.eDialogButtons.OK,
+                    Resources.AppIcon);
+            }
             manager.Start("--start");
             if (properties.ProcessPath != manager.processPath)
             {
@@ -79,20 +90,24 @@ namespace LittleBigMouseManager
                 Settings.Write(properties);
             }
             SystemEvents.DisplaySettingsChanged += new EventHandler(delegate (object sender, EventArgs e)
-            {
+            {   
+                Console.WriteLine(DateTime.Now);
                 if (DateTime.Now < lastTime)
                 {
                     return;
                 }
-                lastTime = DateTime.Now.AddMilliseconds(Settings.loadedProperties.SafetyTime);
+                lastTime = DateTime.Now.AddMilliseconds(Settings.loadedProperties.DisplayChangeTime);
                 if (Settings.loadedProperties.KillLBM)
                 {
                     manager.Restart();
                 }
                 else
                 {
-                    manager.RawStart("--start");
                     manager.RawStart("--stop");
+                    Console.WriteLine(DateTime.Now);
+                    Task.Delay(Settings.loadedProperties.SafetyTime).Wait();
+                    Console.WriteLine(DateTime.Now);
+                    manager.RawStart("--start");
 
                 }
             });
@@ -114,6 +129,11 @@ namespace LittleBigMouseManager
                     Console.WriteLine(ex.ToString());
                 }
             });
+        }
+
+        void OpenSettings(object sender, EventArgs e)
+        {
+            Process.Start(Settings.fileName);
         }
 
         void ReloadSettings(object sender, EventArgs e)
