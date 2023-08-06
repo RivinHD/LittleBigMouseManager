@@ -11,7 +11,6 @@ using LittleBigMouseManager.Properties;
 using System.Threading;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Management.Instrumentation;
 
 namespace LittleBigMouseManager
 {
@@ -49,11 +48,9 @@ namespace LittleBigMouseManager
     public class TrayManager : ApplicationContext
     {
         private readonly NotifyIcon trayIcon;
-        private DateTime lastTime = DateTime.Now;
+        Screen[] lastScreens = Screen.AllScreens;
         private Settings.Properties properties;
         private ProcessManager manager;
-        Task restart_application;
-        private readonly SemaphoreSlim globalLock = new SemaphoreSlim(1);
 
         public TrayManager()
         {
@@ -69,6 +66,29 @@ namespace LittleBigMouseManager
                 }),
                 Visible = true
             };
+        }
+
+        private bool CompareScreens(Screen[] screens1, Screen[] screens2)
+        {
+            bool sameScreens = true;
+            foreach (Screen screen1 in screens1)
+            {
+                bool sameScreen = false;
+                foreach (Screen screen2 in screens2)
+                {
+                    if (screen1 == screen2)
+                    {
+                        sameScreen = true;
+                        break;
+                    }
+                }
+                sameScreens &= sameScreen;
+                if (!sameScreens)
+                {
+                    break;
+                }
+            }
+            return sameScreens;
         }
 
 
@@ -92,64 +112,27 @@ namespace LittleBigMouseManager
                 properties.ProcessPath = manager.processPath;
                 Settings.Write(properties);
             }
-            
 
             SystemEvents.DisplaySettingsChanged += new EventHandler(delegate (object sender, EventArgs e)
             {
-                DateTime oldLastTime;
-                globalLock.Wait();
-                try
-                {
-                    oldLastTime = lastTime;
-                    lastTime = DateTime.Now.AddMilliseconds(Settings.loadedProperties.SafetyTime);
-                }
-                finally
-                {
-                    globalLock.Release();
-                }
-                if (DateTime.Now < oldLastTime || (restart_application != null && !restart_application.IsCompleted))
+                Screen[] screens = Screen.AllScreens;
+                bool screenNotChanged = screens.Length == lastScreens.Length && CompareScreens(screens, lastScreens);
+                lastScreens = screens;
+                if (screenNotChanged)
                 {
                     return;
                 }
 
-                restart_application = Task.Run(delegate ()
+                if (Settings.loadedProperties.KillLBM)
                 {
-                    DateTime lastTime;
-                    globalLock.Wait();
-                    try
-                    {
-                        lastTime = this.lastTime;
-                    }
-                    finally
-                    {
-                        globalLock.Release();
-                    }
-                    while (DateTime.Now < lastTime)
-                    {
-                        Task.Delay(lastTime - DateTime.Now).Wait();
-                        globalLock.Wait();
-                        try
-                        {
-                            lastTime = this.lastTime;
-                        }
-                        finally
-                        {
-                            globalLock.Release();
-                        }
-                    }
-
-                    if (Settings.loadedProperties.KillLBM)
-                    {
-                        manager.Restart();
-                    }
-                    else
-                    {
-                        manager.RawStart("--stop");
-                        Task.Delay(Settings.loadedProperties.SafetyTime).Wait();
-                        manager.RawStart("--start");
-
-                    }
-                });
+                    manager.Restart();
+                }
+                else
+                {
+                    manager.RawStart("--stop");
+                    Task.Delay(Settings.loadedProperties.SafetyTime).Wait();
+                    manager.RawStart("--start");
+                }
             });
 
             bool success = manager.ProcessExitedAttach(delegate (object sender, EventArgs e)
