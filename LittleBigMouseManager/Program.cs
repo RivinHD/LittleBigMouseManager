@@ -17,7 +17,7 @@ namespace LittleBigMouseManager
 {
     internal class Program
     {
-        static Mutex mutex = new Mutex(true, Assembly.GetEntryAssembly().GetCustomAttribute<GuidAttribute>().Value);
+        static readonly Mutex mutex = new Mutex(true, Assembly.GetEntryAssembly().GetCustomAttribute<GuidAttribute>().Value);
 
         [STAThread]
         static void Main()
@@ -48,10 +48,12 @@ namespace LittleBigMouseManager
 
     public class TrayManager : ApplicationContext
     {
-        private NotifyIcon trayIcon;
+        private readonly NotifyIcon trayIcon;
         private DateTime lastTime = DateTime.Now;
         private Settings.Properties properties;
         private ProcessManager manager;
+        Task restart_application;
+        private readonly SemaphoreSlim globalLock = new SemaphoreSlim(1);
 
         public TrayManager()
         {
@@ -68,6 +70,7 @@ namespace LittleBigMouseManager
                 Visible = true
             };
         }
+
 
         private void AttachEvents()
         {
@@ -89,28 +92,66 @@ namespace LittleBigMouseManager
                 properties.ProcessPath = manager.processPath;
                 Settings.Write(properties);
             }
+            
+
             SystemEvents.DisplaySettingsChanged += new EventHandler(delegate (object sender, EventArgs e)
-            {   
-                Console.WriteLine(DateTime.Now);
-                if (DateTime.Now < lastTime)
+            {
+                DateTime oldLastTime;
+                globalLock.Wait();
+                try
+                {
+                    oldLastTime = lastTime;
+                    lastTime = DateTime.Now.AddMilliseconds(Settings.loadedProperties.SafetyTime);
+                }
+                finally
+                {
+                    globalLock.Release();
+                }
+                if (DateTime.Now < oldLastTime || (restart_application != null && !restart_application.IsCompleted))
                 {
                     return;
                 }
-                lastTime = DateTime.Now.AddMilliseconds(Settings.loadedProperties.DisplayChangeTime);
-                if (Settings.loadedProperties.KillLBM)
-                {
-                    manager.Restart();
-                }
-                else
-                {
-                    manager.RawStart("--stop");
-                    Console.WriteLine(DateTime.Now);
-                    Task.Delay(Settings.loadedProperties.SafetyTime).Wait();
-                    Console.WriteLine(DateTime.Now);
-                    manager.RawStart("--start");
 
-                }
+                restart_application = Task.Run(delegate ()
+                {
+                    DateTime lastTime;
+                    globalLock.Wait();
+                    try
+                    {
+                        lastTime = this.lastTime;
+                    }
+                    finally
+                    {
+                        globalLock.Release();
+                    }
+                    while (DateTime.Now < lastTime)
+                    {
+                        Task.Delay(lastTime - DateTime.Now).Wait();
+                        globalLock.Wait();
+                        try
+                        {
+                            lastTime = this.lastTime;
+                        }
+                        finally
+                        {
+                            globalLock.Release();
+                        }
+                    }
+
+                    if (Settings.loadedProperties.KillLBM)
+                    {
+                        manager.Restart();
+                    }
+                    else
+                    {
+                        manager.RawStart("--stop");
+                        Task.Delay(Settings.loadedProperties.SafetyTime).Wait();
+                        manager.RawStart("--start");
+
+                    }
+                });
             });
+
             bool success = manager.ProcessExitedAttach(delegate (object sender, EventArgs e)
             {
                 if (manager.onRestart)
