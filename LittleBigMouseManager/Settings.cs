@@ -17,7 +17,6 @@ namespace LittleBigMouseManager
         {
             public string ProcessName { get; set; } = "LittleBigMouse_Daemon";
             public string ProcessPath { get; set; } = "C:\\Program Files\\LittleBigMouse\\LittleBigMouse_Daemon.exe";
-            public bool AutoRestart { get; set; } = true;
             public bool RestartOnClose { get; set; } = false;
             public bool RestartOnUnwantedClose { get; set; } = true;
             public bool KillLBM { get; set; } = true;
