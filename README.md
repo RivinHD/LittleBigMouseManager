@@ -1,6 +1,6 @@
 # Little Big Mouse Manager
 ## Description
-This is a programm handeling restarting/reloading of [LittleBigMouse](https://github.com/mgth/LittleBigMouse) when the display change (e.g. extend projection to second monitor).
+This is a programm handeling restarting/reloading of [LittleBigMouse](https://github.com/mgth/LittleBigMouse) when the display change and the the screen is a diffrent one (e.g. extend projection to second monitor).
 It is done by killing and starting or using the command line arguments `--start` and `--stop` of the LittleBigMouse_Deamon.
 
 It also restarts LittleBigMouse after a crash (see Settings) or start LittleBigMouse if not runnning.
