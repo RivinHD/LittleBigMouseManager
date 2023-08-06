@@ -153,6 +153,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B6FC778DED5CF3A03215D651F336D6CA"
+        "OwnerKey" = "8:_B168968DC679429F8C0A2EAE81D9DBBB"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BACC204E4FB51A5B7D4290A8595476CA"
         "OwnerKey" = "8:_B168968DC679429F8C0A2EAE81D9DBBB"
         "MsmSig" = "8:_UNDEFINED"
@@ -203,6 +209,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_0DFA4AF5A34FAB201E81D686CB12B5B4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_B6FC778DED5CF3A03215D651F336D6CA"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -609,6 +621,37 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_B6FC778DED5CF3A03215D651F336D6CA"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.CodeDom, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_B6FC778DED5CF3A03215D651F336D6CA"
+                    {
+                    "Name" = "8:System.CodeDom.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.CodeDom.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_88FFF5DBEA1E45B58F6335F53C2C6075"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BACC204E4FB51A5B7D4290A8595476CA"
             {
             "AssemblyRegister" = "3:1"
@@ -769,15 +812,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:LittleBigMouseManager"
-        "ProductCode" = "8:{70F536BC-B63A-430B-AAF2-30870CEC4459}"
-        "PackageCode" = "8:{8472C695-9577-4705-837A-86AD69F8ECD1}"
+        "ProductCode" = "8:{B3B5EB12-EFE4-4E78-8178-90832044C14B}"
+        "PackageCode" = "8:{57A997BA-BDE5-4F8F-AE31-F242DD44F83C}"
         "UpgradeCode" = "8:{CA4730DF-0739-4EE7-96B8-CB7F9187D24A}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.1.0"
         "Manufacturer" = "8:LittleBigMouseManager"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1305,7 +1348,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_B168968DC679429F8C0A2EAE81D9DBBB"
             {
-            "SourcePath" = "8:..\\LittleBigMouseManager\\obj\\x64\\Debug\\LittleBigMouseManager.exe"
+            "SourcePath" = "8:"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_88FFF5DBEA1E45B58F6335F53C2C6075"
