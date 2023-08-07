@@ -11,6 +11,9 @@ using LittleBigMouseManager.Properties;
 using System.Threading;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Linq.Expressions;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace LittleBigMouseManager
 {
@@ -49,6 +52,8 @@ namespace LittleBigMouseManager
     {
         private readonly NotifyIcon trayIcon;
         Screen[] lastScreens = Screen.AllScreens;
+        long lastTimeTicks = DateTime.Now.Ticks;
+        public static object timeLock = new object();
         private Settings.Properties properties;
         private ProcessManager manager;
 
@@ -76,7 +81,10 @@ namespace LittleBigMouseManager
                 bool sameScreen = false;
                 foreach (Screen screen2 in screens2)
                 {
-                    if (screen1 == screen2)
+                    if (screen1.DeviceName == screen2.DeviceName
+                        && screen1.BitsPerPixel == screen2.BitsPerPixel
+                        && screen1.Bounds == screen2.Bounds
+                        && screen1.Primary == screen2.Primary)
                     {
                         sameScreen = true;
                         break;
@@ -99,7 +107,7 @@ namespace LittleBigMouseManager
             manager = new ProcessManager(properties.ProcessName, properties.ProcessPath);
             if (!manager.ProcessExists())
             {
-                Application.Exit(); 
+                Application.Exit();
                 CustomMessageBox.Show(
                     $"Could not find {properties.ProcessName}",
                     Assembly.GetEntryAssembly().GetName().Name,
@@ -113,16 +121,29 @@ namespace LittleBigMouseManager
                 Settings.Write(properties);
             }
 
-            SystemEvents.DisplaySettingsChanged += new EventHandler(delegate (object sender, EventArgs e)
+            SystemEvents.DisplaySettingsChanged += new EventHandler(async delegate (object sender, EventArgs e)
             {
                 Screen[] screens = Screen.AllScreens;
+                long timeTicks = DateTime.Now.Ticks;
                 bool screenNotChanged = screens.Length == lastScreens.Length && CompareScreens(screens, lastScreens);
+                Console.WriteLine(JsonSerializer.Serialize(Screen.AllScreens));
                 lastScreens = screens;
+                lock (timeLock)
+                {
+                    lastTimeTicks = timeTicks;
+                }
                 if (screenNotChanged)
                 {
                     return;
                 }
-
+                await Task.Delay(Settings.loadedProperties.DisplayChangeTime); 
+                lock (timeLock)
+                {
+                    if (lastTimeTicks != timeTicks)
+                    {
+                        return;
+                    }
+                }
                 if (Settings.loadedProperties.KillLBM)
                 {
                     manager.Restart();
@@ -130,7 +151,7 @@ namespace LittleBigMouseManager
                 else
                 {
                     manager.RawStart("--stop");
-                    Task.Delay(Settings.loadedProperties.SafetyTime).Wait();
+                    await Task.Delay(Settings.loadedProperties.SafetyTime);
                     manager.RawStart("--start");
                 }
             });

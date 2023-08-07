@@ -21,6 +21,7 @@ namespace LittleBigMouseManager
             public bool RestartOnUnwantedClose { get; set; } = true;
             public bool KillLBM { get; set; } = true;
             public int SafetyTime { get; set; } = 500;
+            public int DisplayChangeTime { get; set; } = 3000;
         }
         public readonly static Properties defaultProperties = new Properties();
         public static Properties loadedProperties = null;

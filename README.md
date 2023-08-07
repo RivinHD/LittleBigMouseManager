@@ -20,4 +20,5 @@ There are the following settings:
 - **RestartOnClose** [true/false]: Restart LBM if it was exited in **any** way
 - **RestartOnUnwantedClose** [true/false]: Restart LDM if it was exited witout Exit Code 0 (LBM completed successfully with no problems).
 - **KillLBM** [true/false]: Kill current LDM process and restart if set to true. If set to false it uses `--stop` wait with the setting SafetyTime and use `--start`.
-- **SafetyTime** [time in milliseconds]: Time to wait before handeling a display change event or between executing `--stop` and `--start`. If the time of the display change event overlaps the latest will be used to execute the reloading/restarting.
+- **SafetyTime** [time in milliseconds]: Time to wait between executing `--stop` and `--start`. 
+- **DisplayChangeTime** [time in milliseconds]: Time to wait for other display change events to happen (needed because some monitor takes some time from sleep to activate) and the last event will be executed.
