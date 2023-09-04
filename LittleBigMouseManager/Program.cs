@@ -12,8 +12,6 @@ using System.Threading;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.Json;
-using System.Linq.Expressions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace LittleBigMouseManager
 {
@@ -65,6 +63,7 @@ namespace LittleBigMouseManager
             {
                 Icon = Resources.AppIcon,
                 ContextMenu = new ContextMenu(new MenuItem[] {
+                    new MenuItem("Start LBM", (object sender, EventArgs e) => {manager.Start("--start");}),
                     new MenuItem("Open Settings", OpenSettings),
                     new MenuItem("Reload Settings", ReloadSettings),
                     new MenuItem("Exit", Exit)
@@ -136,7 +135,7 @@ namespace LittleBigMouseManager
                 {
                     return;
                 }
-                await Task.Delay(Settings.loadedProperties.DisplayChangeTime); 
+                await Task.Delay(Settings.loadedProperties.DisplayChangeTime);
                 lock (timeLock)
                 {
                     if (lastTimeTicks != timeTicks)
@@ -172,6 +171,11 @@ namespace LittleBigMouseManager
                 catch (InvalidOperationException ex)
                 {
                     Console.WriteLine(ex.ToString());
+                    CustomMessageBox.Show(
+                        $"LBM exited and could not be restarted for some reson\nError: {ex}",
+                        Assembly.GetEntryAssembly().GetName().Name,
+                        CustomMessageBox.eDialogButtons.OK,
+                        Resources.AppIcon);
                 }
             });
         }
