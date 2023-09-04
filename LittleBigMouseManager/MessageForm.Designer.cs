@@ -43,7 +43,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblText.AutoSize = true;
             this.lblText.Location = new System.Drawing.Point(18, 15);
-            this.lblText.MaximumSize = new System.Drawing.Size(294, 0);
+            this.lblText.MaximumSize = new System.Drawing.Size(255, 0);
             this.lblText.Name = "lblText";
             this.lblText.Size = new System.Drawing.Size(28, 13);
             this.lblText.TabIndex = 0;
@@ -110,6 +110,7 @@
             this.Padding = new System.Windows.Forms.Padding(15);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Title";
+            this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
             this.Load += new System.EventHandler(this.MessageForm_Load_1);
             this.ResumeLayout(false);
             this.PerformLayout();

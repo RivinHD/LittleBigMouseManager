@@ -112,7 +112,7 @@ namespace LittleBigMouseManager
         public void Restart()
         {
             _onRestart = true;
-            if (process != null)
+            if (process != null || !process.HasExited)
             {
                 process.Kill();
                 process.WaitForExit();

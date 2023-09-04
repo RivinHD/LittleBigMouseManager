@@ -171,11 +171,6 @@ namespace LittleBigMouseManager
                 catch (InvalidOperationException ex)
                 {
                     Console.WriteLine(ex.ToString());
-                    CustomMessageBox.Show(
-                        $"LBM exited and could not be restarted for some reson\nError: {ex}",
-                        Assembly.GetEntryAssembly().GetName().Name,
-                        CustomMessageBox.eDialogButtons.OK,
-                        Resources.AppIcon);
                 }
             });
         }
